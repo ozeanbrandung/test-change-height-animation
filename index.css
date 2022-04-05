@@ -48,16 +48,23 @@ p {
     padding: 10px;
 }
 
+#vkladki {
+    transition: height 0.3s ease;
+    overflow: hidden;
+}
+
 .lc-tabs__content {
     padding: 0;
     margin: 0;
-    transition: height 0.5s ease, opacity 0.5s ease 0.2s;
     overflow: hidden;
+    transition: opacity .5s ease 0.2s;
     opacity: 0;
+    height: 0;
 }
 
 .lc-tabs__content.lc-tabs__content_visible {
     padding: 10px 20px;
     opacity: 1;
+    height: auto;
 }
 

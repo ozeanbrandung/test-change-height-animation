@@ -1,6 +1,9 @@
 const tabs = document.querySelector(".wrapper");
 const tabButton = document.querySelectorAll(".lc-tabs__tab");
 const contents = document.querySelectorAll(".lc-tabs__content");
+const vkladki = document.getElementById("vkladki");
+const initialActiveItem = document.querySelector(".lc-tabs__content.lc-tabs__content_visible");
+const tabsHeight = 41;
 
 /* класс для отслеживания изменний в классах */
 class ClassWatcher {
@@ -24,9 +27,9 @@ class ClassWatcher {
         this.observer.observe(this.targetNode, { attributes: true })
     }
 
-    disconnect() {
-        this.observer.disconnect()
-    }
+    // disconnect() {
+    //     this.observer.disconnect()
+    // }
 
     mutationCallback = mutationsList => {
         for(let mutation of mutationsList) {
@@ -47,7 +50,6 @@ class ClassWatcher {
 }
 
 /* для переключения табов */
-
 tabs.onclick = e => {
     const id = e.target.dataset.id;
     if (id) {
@@ -63,31 +65,18 @@ tabs.onclick = e => {
         element.classList.add("lc-tabs__content_visible");
     }
 }
-
 /* ---- */
 
-/* первая инициализиция атрибута style　для всех контентов */
-contents.forEach(el => {
-    if (el.classList.contains("lc-tabs__content_visible")) {
-        const newHeight = el.scrollHeight;
-        el.style.height = newHeight + 'px';
-    } else {
-        el.style.height = "0px";
-    }
-})
+/* первая инициализиция атрибута style　для общего контейнера */
+vkladki.style.height = initialActiveItem.scrollHeight + tabsHeight + 'px';
 
-/* при добавлении класса lc-tabs__content_visible на какой-либо из контентов */
+/* при добавлении класса меняем высотц родителя в зависимости от высоты добавленного нода */
 const workOnClassAdd = (node) => {
-    console.log('class Added node: ', node)
-    const newHeight = node.scrollHeight;
-    node.style.height = newHeight + 'px';
+    vkladki.style.height = tabsHeight + node.scrollHeight + 'px';
 }
 
-
-/* при удалении класса lc-tabs__content_visible на какой-либо из контентов */
 const workOnClassRemoval = (node) => {
-    console.log('class removed node:', node)
-    node.style.height = "0px";
+    console.log('class was removed');
 }
 
 contents.forEach(targetNode => {
