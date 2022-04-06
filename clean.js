@@ -1,10 +1,9 @@
-/* класс для отслеживания изменний в классах */
+/* класс для отслеживания изменний в атрибутах заданного узла */
 class ClassWatcher {
-    constructor(targetNode, classToWatch, classAddedCallback, classRemovedCallback) {
+    constructor(targetNode, classToWatch, classAddedCallback) {
         this.targetNode = targetNode
         this.classToWatch = classToWatch
         this.classAddedCallback = classAddedCallback
-        this.classRemovedCallback = classRemovedCallback
         this.observer = null
         this.lastClassState = targetNode.classList.contains(this.classToWatch)
 
@@ -20,10 +19,6 @@ class ClassWatcher {
         this.observer.observe(this.targetNode, { attributes: true })
     }
 
-    // disconnect() {
-    //     this.observer.disconnect()
-    // }
-
     mutationCallback = mutationsList => {
         for(let mutation of mutationsList) {
             if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
@@ -33,42 +28,18 @@ class ClassWatcher {
                     if(currentClassState) {
                         this.classAddedCallback(this.targetNode)
                     }
-                    else {
-                        this.classRemovedCallback(this.targetNode)
-                    }
                 }
             }
         }
     }
 }
 
-const runOnReady = () => {
-    /* элементы для осуществления переключения */
-    const tabs = document.querySelector(".wrapper");
-    const tabButtons = document.querySelectorAll(".lc-tabs__tab");
-    /* --- */
+//после полной прогрузки страницы:
+document.addEventListener("DOMContentLoaded", function(){
     const contents = document.querySelectorAll("#vkladki .lc-tabs__content");
     const vkladki = document.getElementById("vkladki");
     const initialActiveItem = document.querySelector("#vkladki .lc-tabs__content.lc-tabs__content_visible");
     const tabsHeight = document.querySelector("#vkladki .lc-tabs__scroll-wrapper").offsetHeight;
-
-    /* для переключения табов */
-    tabs.onclick = e => {
-        const id = e.target.dataset.id;
-        if (id) {
-            tabButtons.forEach(btn => {
-                btn.classList.remove("lc-tabs__content_visible");
-            });
-            e.target.classList.add("lc-tabs__content_visible");
-
-            contents.forEach(content => {
-                content.classList.remove("lc-tabs__content_visible");
-            });
-            const element = document.getElementById(id);
-            element.classList.add("lc-tabs__content_visible");
-        }
-    }
-    /* ---- */
 
     /* первая инициализиция атрибута style　для общего контейнера */
     vkladki.style.height = initialActiveItem.offsetHeight + tabsHeight + 'px';
@@ -78,22 +49,9 @@ const runOnReady = () => {
         vkladki.style.height = tabsHeight + node.scrollHeight + 'px';
     }
 
-    const workOnClassRemoval = (node) => {
-        console.log('class was removed');
-    }
-
+    //устанавливаем слежку за каждым элементом контента
     contents.forEach(targetNode => {
-        new ClassWatcher(targetNode, 'lc-tabs__content_visible', workOnClassAdd, workOnClassRemoval);
+        new ClassWatcher(targetNode, 'lc-tabs__content_visible', workOnClassAdd);
     })
-}
+});
 
-function areWeReady(fn) {
-    if (document.readyState === "complete" || document.readyState === "interactive") {
-        setTimeout(fn, 1);
-    } else {
-        document.addEventListener("DOMContentLoaded", fn);
-    }
-}
-
-//после полной прогрузки страницы:
-areWeReady(runOnReady);
