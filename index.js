@@ -48,7 +48,7 @@ const runOnReady = () => {
     const tabButtons = document.querySelectorAll(".lc-tabs__tab");
     /* --- */
     const contents = document.querySelectorAll("#vkladki .lc-tabs__content");
-    const vkladki = document.getElementById("vkladki");
+    const blockWithSmoothingHeight = document.querySelector("#vkladki .lc-tabs");
     const initialActiveItem = document.querySelector("#vkladki .lc-tabs__content.lc-tabs__content_visible");
     const tabsHeight = document.querySelector("#vkladki .lc-tabs__scroll-wrapper").offsetHeight;
 
@@ -70,16 +70,23 @@ const runOnReady = () => {
     }
     /* ---- */
 
+    const calculateHeight = (element) => () => {
+        blockWithSmoothingHeight.style.height = tabsHeight + element.scrollHeight + 'px';
+    }
     /* первая инициализиция атрибута style　для общего контейнера */
-    vkladki.style.height = initialActiveItem.offsetHeight + tabsHeight + 'px';
+    calculateHeight(initialActiveItem)();
 
     /* при добавлении класса меняем высоту родителя в зависимости от высоты отображаемого сейчас нода */
     const workOnClassAdd = (node) => {
-        vkladki.style.height = tabsHeight + node.scrollHeight + 'px';
-    }
+        calculateHeight(node)();
+        /* и навешиваем listener ресайза с калькуляцией высоты заново при ресайзе */
+        window.addEventListener('resize', calculateHeight(node))
+}
 
     const workOnClassRemoval = (node) => {
-        console.log('class was removed');
+        // при удалении класса удаляем так же и listener, который триггерит пересчет высоты конкретного
+        // узла (предыдущего видимого
+        window.removeEventListener('resize', calculateHeight(node));
     }
 
     contents.forEach(targetNode => {
