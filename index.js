@@ -75,6 +75,7 @@ const runOnReady = () => {
     }
     /* первая инициализиция атрибута style　для общего контейнера */
     calculateHeight(initialActiveItem)();
+    window.addEventListener('resize', calculateHeight(initialActiveItem));
 
     /* при добавлении класса меняем высоту родителя в зависимости от высоты отображаемого сейчас нода */
     const workOnClassAdd = (node) => {
