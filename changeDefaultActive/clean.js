@@ -8,6 +8,7 @@ const runOnReady = () => {
 
     tabButtons[1].classList.add("lc-tabs__tab_active");
     tabButtons[1].setAttribute("aria-selected", "true");
+    tabButtons[1].focus();
     contents[1].classList.add("lc-tabs__content_visible");
 }
 
